@@ -1,5 +1,11 @@
 Loggly plugin for Fluentd
 =============
+Branch notes
+
+There appear to be issues Net:HTTP::Persistent on some versions of ruby? https://github.com/drbrain/net-http-persistent/issues/37
+These are appearing as "Bad Request" responses from loggly when they are posted
+Reverting changes to use Net::HTTP::Persistent
+
 With fluent-plugin-loggly you will be able to use the service loggly.com as output for you fluentd logs.
 
 # Getting Started
@@ -14,6 +20,8 @@ With fluent-plugin-loggly you will be able to use the service loggly.com as outp
 
 ## Parameters
 **loggly_url** the url to your loggly input (string)  
+**progname** program name to include in log messages. [ruby doc](http://www.ruby-doc.org/stdlib-1.9.3/libdoc/logger/rdoc/Logger.html#progname-attribute-method) (string)
+
 
 Setup the loggly output:
 
@@ -25,4 +33,5 @@ Setup the loggly output:
 ~~~~~
 
 # TODO
-?
+* TCP support
+
