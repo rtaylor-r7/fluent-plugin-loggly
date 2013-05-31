@@ -32,13 +32,14 @@ class LogglyOutput < Fluent::Output
 
   def start
     super
-    require "net/https"
-    require "uri"
+
+    #see https://github.com/fluent/fluentd/issues/76
+    encoding = Encoding.default_internal
+    Encoding.default_internal = nil
+    require "rest_client"
+    Encoding.default_internal = encoding
+
     require "json"
-    uri = URI.parse @loggly_url
-    @https = Net::HTTP.new(uri.host, uri.port)
-    @https.use_ssl = true
-    @request = Net::HTTP::Post.new(uri.request_uri, initheader={'Content-Type' => 'application/json'})
   end
 
   def shutdown
@@ -50,13 +51,13 @@ class LogglyOutput < Fluent::Output
     es.each {|time,record|
       record_json = record.to_json
       $log.debug "Record sent #{record_json}"
-      @request.body = record_json
       begin
-        response = @https.request(@request)
+        response = RestClient.post @loggly_url, record_json, :content_type => 'application/json' 
         $log.debug "HTTP Response code #{response.code}"
-        $log.error response.message if response.code != "200"
-      rescue
-        $log.error "Error connecting to loggly verify the url #{@loggly_url}"
+        $log.error "Response code #{response.code}: #{response}" if response.code != 200
+      rescue => e
+        $log.error "Error connecting to loggly verify the url #{@loggly_url} - #{e.message}"
+        $log.debug e.backtrace
       end
     }
   end

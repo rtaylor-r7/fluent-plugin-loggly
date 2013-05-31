@@ -1,12 +1,14 @@
 Loggly plugin for Fluentd
 =============
-Branch notes
+
+With fluent-plugin-loggly you will be able to use the service loggly.com as output for you fluentd logs.
+
+#Branch notes
 
 There appear to be issues Net:HTTP::Persistent on some versions of ruby? https://github.com/drbrain/net-http-persistent/issues/37
 These are appearing as "Bad Request" responses from loggly when they are posted
-Reverting changes to use Net::HTTP::Persistent
+Changed to use rest-client gem instead of Net::HTTP, simplier and dont' have to worry about getting into bad state
 
-With fluent-plugin-loggly you will be able to use the service loggly.com as output for you fluentd logs.
 
 # Getting Started
 * Install fluentd http://fluentd.org
